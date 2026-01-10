@@ -1,0 +1,78 @@
+name: Docker Build & Deploy to EKS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docker/**"
+      - "kubernetes/**"
+
+  workflow_run:
+    workflows: ["Terraform Infra"]
+    types:
+      - completed
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------
+      # CHECKOUT
+      # -------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # AWS AUTH
+      # -------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # -------------------------
+      # DOCKER BUILD & PUSH (ECR)
+      # -------------------------
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 \
+          | docker login --username AWS --password-stdin \
+          859012632884.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build Docker image
+        working-directory: docker
+        run: docker build -t hello-app .
+
+      - name: Tag Docker image
+        run: |
+          docker tag hello-app:latest \
+          859012632884.dkr.ecr.us-east-1.amazonaws.com/hello-app-repo:latest
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push \
+          859012632884.dkr.ecr.us-east-1.amazonaws.com/hello-app-repo:latest
+
+      # -------------------------
+      # DEPLOY TO EKS
+      # -------------------------
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region us-east-1 \
+            --name HRGF-cluster
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f kubernetes/
+          kubectl rollout status deployment/hello-app
+
