@@ -57,7 +57,10 @@ terraform apply -auto-approve
 
 > Note: Terraform state should ideally be stored in S3 with DynamoDB locking for safe concurrent runs.
 > 
-
+pipeline1-node.png*
+pipeline2-node.png*
+eks-cluster.png*
+eks-cluster-node.png*
 </details>
 
 ---
@@ -145,8 +148,8 @@ kubectl get pods
 
 </details>
 
-![Screenshot 2026-01-10 185117.png](attachment:470d1e50-3c5c-436e-968a-0ad30c535b73:Screenshot_2026-01-10_185117.png)
-
+kubectl-get-pods.png*
+loadbalancer-service.png*
 ---
 
 ## **Access the App**
@@ -159,7 +162,7 @@ kubectl get pods
 > 
 > `http://a8c7751ad243342bcb76560afbbfaaa7-270312673.us-east-1.elb.amazonaws.com`
 > 
-> ![Screenshot 2026-01-10 185406.png](attachment:89c452a8-9755-4ce1-a49b-75b47965e48b:Screenshot_2026-01-10_185406.png)
+> 
 > 
 
 ---
