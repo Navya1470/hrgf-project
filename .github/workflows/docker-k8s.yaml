@@ -55,12 +55,12 @@ jobs:
       - name: Tag Docker image
         run: |
           docker tag hello-app:latest \
-          859012632884.dkr.ecr.us-east-1.amazonaws.com/hello-app-repo:latest
+          859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo
 
       - name: Push Docker image to ECR
         run: |
           docker push \
-          859012632884.dkr.ecr.us-east-1.amazonaws.com/hello-app-repo:latest
+          859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo
 
       # -------------------------
       # DEPLOY TO EKS
