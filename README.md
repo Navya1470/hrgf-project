@@ -182,10 +182,6 @@ kubectl get pods
 - Pods, Deployments, Services outputs
 - Live application screenshot
 
-> In Notion, you can add images or GIFs here for proof.
-> 
-
----
 
 ## **Live Application Link**
 
