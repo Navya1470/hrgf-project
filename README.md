@@ -55,12 +55,21 @@ terraform apply -auto-approve
 
 ```
 
+### Terraform Infrastructure – AWS EKS
+
+![EKS Cluster](screenshots/eks-cluster.png)
+
+![EKS Worker Nodes](screenshots/eks-cluster-node.png)
+### GitHub Actions Pipeline Execution
+
+![Terraform & Deployment Pipeline](screenshots/pipeline1-node.png)
+
+![Pipeline Job Details](screenshots/pipeline2-node.png)
+
+
 > Note: Terraform state should ideally be stored in S3 with DynamoDB locking for safe concurrent runs.
 > 
-pipeline1-node.png*
-pipeline2-node.png*
-eks-cluster.png*
-eks-cluster-node.png*
+
 </details>
 
 ---
@@ -141,6 +150,14 @@ kubectl get pods
 
 ```
 
+### Kubernetes Resources
+
+![Running Pods](screenshots/kubectl-get-pods.png)
+
+![LoadBalancer Service](screenshots/loadbalancer-service.png)
+
+
+
 **Note:**
 
 - Service type is **LoadBalancer** for public access
@@ -148,8 +165,6 @@ kubectl get pods
 
 </details>
 
-kubectl-get-pods.png*
-loadbalancer-service.png*
 ---
 
 ## **Access the App**
