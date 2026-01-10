@@ -206,4 +206,24 @@ kubectl get pods
 
 ex: 
 
-`http://<your-ELB-DNS>.us-east-1.elb.amazonaws.com`
+`http://<your-ELB-DNS>.us-east-1.elb.amazonaws.com
+`
+
+
+Author
+
+Navya Marikanti
+DevOps Engineer
+
+
+---
+
+## **Thank You**
+
+Thank you for taking the time to review this project.  
+I hope this demonstrates my understanding of **DevOps principles**, automated deployment, and CI/CD best practices.  
+
+Feel free to reach out if you have any questions or need a live demonstration of the deployment.
+
+---
+
