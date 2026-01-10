@@ -119,6 +119,7 @@ docker push 859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo
 aws eks update-kubeconfig \
     --region us-east-1 \
     --name HRGF-project-cluster
+    
 
 # Apply Kubernetes manifests
 kubectl apply -f kubernetes/
@@ -137,12 +138,14 @@ kubectl get pods
 
 ```
 
-**Notes:**
+**Note:**
 
 - Service type is **LoadBalancer** for public access
 - Deployment automatically updates the app with new Docker images
 
 </details>
+
+![Screenshot 2026-01-10 185117.png](attachment:470d1e50-3c5c-436e-968a-0ad30c535b73:Screenshot_2026-01-10_185117.png)
 
 ---
 
@@ -155,6 +158,8 @@ kubectl get pods
 > 
 > 
 > `http://a8c7751ad243342bcb76560afbbfaaa7-270312673.us-east-1.elb.amazonaws.com`
+> 
+> ![Screenshot 2026-01-10 185406.png](attachment:89c452a8-9755-4ce1-a49b-75b47965e48b:Screenshot_2026-01-10_185406.png)
 > 
 
 ---
@@ -177,12 +182,10 @@ kubectl get pods
 
 ---
 
-## **Screenshots / Evidence**
-
-- Pods, Deployments, Services outputs
-- Live application screenshot
-
+---
 
 ## **Live Application Link**
 
-`http://<your-ELB-DNS>.us-east-1.elb.amazonaws.com`# hrgf-project
+ex: 
+
+`http://<your-ELB-DNS>.us-east-1.elb.amazonaws.com`
