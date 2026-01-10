@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
 
-  cluster_name    = "HRGF-cluster"
+  cluster_name    = "HRGF-project-cluster"
   cluster_version = "1.31"
 
   vpc_id     = module.vpc.vpc_id
