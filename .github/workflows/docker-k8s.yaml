@@ -68,7 +68,7 @@ jobs:
         run: |
           aws eks update-kubeconfig \
             --region us-east-1 \
-            --name HRGF-project-cluster
+            --name HRGF-project-cluster-2
 
       - name: Deploy to Kubernetes
         run: |
