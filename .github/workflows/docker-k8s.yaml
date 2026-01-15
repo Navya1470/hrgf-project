@@ -17,20 +17,17 @@ on:
 
 jobs:
   deploy:
-    if: >
-      github.event_name != 'workflow_run' ||
-      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
       # -------------------------
-      # CHECKOUT
+      # CHECKOUT CODE
       # -------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
       # -------------------------
-      # AWS AUTH
+      # AWS AUTHENTICATION
       # -------------------------
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -40,7 +37,7 @@ jobs:
           aws-region: us-east-1
 
       # -------------------------
-      # DOCKER BUILD & PUSH (ECR)
+      # DOCKER BUILD & PUSH TO ECR
       # -------------------------
       - name: Login to Amazon ECR
         run: |
@@ -51,7 +48,7 @@ jobs:
         working-directory: docker
         run: docker build -t hello-app .
 
-      - name: Tag Docker image with commit SHA
+      - name: Tag Docker image with Git SHA
         run: |
           IMAGE_TAG=${GITHUB_SHA::7}  # First 7 characters of commit SHA
           docker tag hello-app:latest 859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG
@@ -64,26 +61,25 @@ jobs:
       # -------------------------
       # DEPLOY TO EKS
       # -------------------------
-      - name: Update kubeconfig
+      - name: Update kubeconfig for EKS cluster
         run: |
           aws eks update-kubeconfig \
             --region us-east-1 \
             --name HRGF-project-cluster-2
 
-      # -------------------------
-      # APPLY KUBERNETES MANIFESTS
-      # -------------------------
-      - name: Apply Kubernetes manifests
+      - name: Deploy application to Kubernetes
         run: |
+          # Check cluster and nodes
+          kubectl config current-context
+          kubectl get nodes
+
+          # Replace image in deployment manifest dynamically
+          sed -i "s|image: .*|image: 859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG|" kubernetes/deployment.yaml
+
+          # Apply deployment and service manifests
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
 
-      # -------------------------
-      # UPDATE IMAGE AND ROLLING DEPLOYMENT
-      # -------------------------
-      - name: Update Deployment image
-        run: |
-          kubectl set image deployment/hello-app \
-            hello-app=859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG
+          # Wait for deployment rollout
           kubectl rollout status deployment/hello-app
 
