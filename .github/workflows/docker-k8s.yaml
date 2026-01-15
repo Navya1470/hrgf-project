@@ -7,12 +7,10 @@ on:
     paths:
       - "docker/**"
       - "kubernetes/**"
-
   workflow_run:
     workflows: ["Terraform Infra"]
     types:
       - completed
-
   workflow_dispatch:
 
 jobs:
@@ -23,7 +21,7 @@ jobs:
       # -------------------------
       # CHECKOUT CODE
       # -------------------------
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       # -------------------------
@@ -50,7 +48,7 @@ jobs:
 
       - name: Tag Docker image with Git SHA
         run: |
-          IMAGE_TAG=${GITHUB_SHA::7}  # First 7 characters of commit SHA
+          IMAGE_TAG=${GITHUB_SHA::7}  # first 7 characters of commit SHA
           docker tag hello-app:latest 859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
@@ -63,23 +61,17 @@ jobs:
       # -------------------------
       - name: Update kubeconfig for EKS cluster
         run: |
-          aws eks update-kubeconfig \
-            --region us-east-1 \
-            --name HRGF-project-cluster-2
+          aws eks update-kubeconfig --region us-east-1 --name HRGF-project-cluster-2
 
       - name: Deploy application to Kubernetes
         run: |
-          # Check cluster and nodes
-          kubectl config current-context
-          kubectl get nodes
-
-          # Replace image in deployment manifest dynamically
+          # Replace image in deployment.yaml dynamically with new image tag
           sed -i "s|image: .*|image: 859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG|" kubernetes/deployment.yaml
 
-          # Apply deployment and service manifests
+          # Apply deployment and service manifests (will create if not exist)
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
 
-          # Wait for deployment rollout
+          # Wait for deployment rollout to complete
           kubectl rollout status deployment/hello-app
 
