@@ -70,8 +70,20 @@ jobs:
             --region us-east-1 \
             --name HRGF-project-cluster-2
 
-      - name: Deploy to Kubernetes
+      # -------------------------
+      # APPLY KUBERNETES MANIFESTS
+      # -------------------------
+      - name: Apply Kubernetes manifests
         run: |
-          kubectl set image deployment/hello-app hello-app=859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
+
+      # -------------------------
+      # UPDATE IMAGE AND ROLLING DEPLOYMENT
+      # -------------------------
+      - name: Update Deployment image
+        run: |
+          kubectl set image deployment/hello-app \
+            hello-app=859012632884.dkr.ecr.us-east-1.amazonaws.com/hrgf-image-repo:$IMAGE_TAG
           kubectl rollout status deployment/hello-app
 
